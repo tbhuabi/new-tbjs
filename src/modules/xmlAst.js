@@ -1,13 +1,10 @@
 'use strict';
 
 function minErr(module) {
-    return function (code, template) {
-        var args = arguments;
-        var msg = '[' + (module ? module + ':' : '') + code + ']  ';
-        var index = 0;
+    return function (code, template, ...info) {
+        let msg = '[' + (module ? module + ':' : '') + code + ']  ';
         msg += template.replace(/\{(\d+)\}/g, function (str, $1) {
-            index = +$1;
-            return args[index + 2] ? args[index + 2] : str;
+            return info[+$1] ? info[+$1] : str;
         })
 
         msg += '\nhttp://www.TBjs.org?module=' + module + '&type=' + code;
