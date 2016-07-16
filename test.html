@@ -1,0 +1,39 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <title>Document</title>
+    <script src="src/modules/xmlAst.js"></script>
+    <script>
+        window.onload = function() {
+
+            var xml = new XmlAst();
+            var result = xml.ast(document.body.innerHTML);
+            //            var result = xml.parser('<div></div><div></div>');
+            console.log(result);
+        }
+
+    </script>
+    <style>
+        /*        fdsas<div></div>*/
+
+    </style>
+</head>
+
+<body>
+    <div></div>
+    <script>
+        var a = 'a';
+
+    </script>
+    <!--    fdafdsa-->
+    <style type="text/css">
+        div {
+            color: #000;
+        }
+
+    </style>
+</body>
+
+</html>
