@@ -2,7 +2,8 @@ import {
     isArray,
     isUndefined,
     unique,
-    trim
+    trim,
+    isOddTag
 }
 from './public';
 
@@ -11,15 +12,11 @@ import {
     NODE_TYPE_TEXT,
     NODE_TYPE_COMMENT,
     NODE_TYPE_DOCUMENT,
-    NODE_TYPE_DOCUMENTFRAGMENT
+    NODE_TYPE_DOCUMENTFRAGMENT,
 }
 from './variables';
 
 class RootElement {
-    constructor() {
-        this.$DOCTYPE = 'VIRTUAL_DOM';
-    }
-
     getInnerHtml() {
         if (this.innerHTML) {
             return this.innerHTML;
@@ -77,10 +74,10 @@ class RootElement {
         if (this.nodeType === NODE_TYPE_ELEMENT) {
             let tagName = this.tagName.toLowerCase();
             let attrHtml = getAttributeHtml(this.attributes);
-            if (ODD_TAG_LIST.indexOf(tagName) === -1) {
+            if (this.childNodes) {
                 outerHtml = '<' + tagName + (attrHtml ? ' ' + attrHtml : '') + '>' + getChildNodesHtml(this) + '</' + tagName + '>';
             } else {
-                outerHtml = '<' + tagName + ' ' + attrHtml + '>';
+                outerHtml = '<' + tagName + (attrHtml ? ' ' + attrHtml : '') + (isOddTag.test(tagName) ? '' : '/') + '>';
             }
         } else if (this.nodeType === NODE_TYPE_DOCUMENT) {
             outerHtml = getChildNodesHtml(this);
@@ -422,7 +419,7 @@ class DocumentElement extends ElementMethod {
     constructor(...args) {
         super(...args);
         this.$targetElement = null;
-        this.nodeType = NODE_TYPE_DOCUMENT;
+        this.nodeType = NODE_TYPE_DOCUMENTFRAGMENT;
         this.parentNode = null;
         this.innerHTML = '';
         this.innerText = '';
@@ -433,18 +430,17 @@ class DocumentElement extends ElementMethod {
         this.children = [];
         this.eventListener = {};
     }
-    createElement(tag) {
-        tag = tag.toLowerCase();
-        if (ODD_TAG_LIST.indexOf(tag) === -1) {
-            return new EvenElement(tag);
+    createElement(node) {
+        if (node.beginTag && node.closeTag || isOddTag.test(node.tagName)) {
+            return new OddElement(node.tagName);
         }
-        return new OddElement(tag);
+        return new EvenElement(node.tagName);
     }
-    createTextNode(text) {
-        return new TextElement(text);
+    createTextNode(node) {
+        return new TextElement(node.text);
     }
-    createComment(commentText) {
-        return new CommentElement(commentText);
+    createComment(node) {
+        return new CommentElement(node.text);
     }
     getElementById(id) {
         function getElementById(parent) {

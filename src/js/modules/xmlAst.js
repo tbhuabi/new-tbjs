@@ -4,13 +4,15 @@ import {
     NODE_TYPE_TEXT,
     NODE_TYPE_COMMENT,
     NODE_TYPE_DOCUMENT,
-    NODE_TYPE_DOCUMENTFRAGMENT
+    NODE_TYPE_DOCUMENTFRAGMENT,
 }
 from './variables';
+import {
+    isOddTag
+}
+from './public';
 
 const xmlParseMinErr = minErr('XmlAst');
-
-let ODD_TAG_LIST = ['img', 'input', 'br', 'hr', 'param', 'meta', 'link'];
 
 export default class XmlAst {
     ast(text) {
@@ -171,8 +173,6 @@ export default class XmlAst {
     readTag() {
         const startRowIndex = this.rowIndex;
         const startIndex = this.index;
-        const TEST_ODD_TAG_REG = new RegExp('^' + ODD_TAG_LIST.join('|') + '$');
-
         let tagName = '';
         let propertis;
         let ch;
@@ -206,7 +206,7 @@ export default class XmlAst {
             tag.closeTag = true;
 
         } else if (ch == '>') {
-            if (TEST_ODD_TAG_REG.test(tag.tagName)) {
+            if (isOddTag.test(tag.tagName)) {
                 tag.closeTag = true;
                 tag.beginTag = true;
             } else if (tagName.charAt(0) == '/') {
@@ -233,7 +233,7 @@ export default class XmlAst {
                 break;
             }
             let property = {
-                name: this.readPropertyKey()
+                key: this.readPropertyKey()
             };
             ch = this.text.charAt(this.index);
             if (ch == '=') {

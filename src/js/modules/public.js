@@ -5,14 +5,16 @@ function isType(type) {
         return {}.toString.call(obj) == '[object ' + type + ']';
     }
 };
-let isObject = isType('Object');
-let isString = isType('String');
-let isArray = Array.isArray || isType('Array');
-let isFunction = isType('Function');
-let isUndefined = isType('Undefined');
-let isNumber = function (val) {
+const isObject = isType('Object');
+const isString = isType('String');
+const isArray = Array.isArray || isType('Array');
+const isFunction = isType('Function');
+const isUndefined = isType('Undefined');
+const isNumber = function (val) {
     return typeof val === 'number';
 };
+const ODD_TAG_LIST = ['img', 'input', 'br', 'hr', 'param', 'meta', 'link'];
+const isOddTag = new RegExp('^' + ODD_TAG_LIST.join('|') + '$');
 
 function isEmpty(str) {
     return /^[\s\t\n\r\v]$/gm.test(str);
@@ -58,5 +60,6 @@ export {
     isEmpty,
     trim,
     forEach,
-    unique
+    unique,
+    isOddTag
 }
