@@ -1,7 +1,8 @@
-import XmlAst from './modules/xmlAst';
+import HtmlParser from './modules/htmlParser';
 
 window.onload = function () {
-  let ast = new XmlAst();
-  let a = ast.ast('<aa/><img>');
-  console.log(a)
+    let htmlParser = new HtmlParser();
+    debugger;
+    let a = htmlParser.parse('<aa/><img>');
+    console.log(a)
 };
