@@ -19,7 +19,7 @@ export default class HtmlParser {
         return this.compile(this.virtualDom, this.fragment.childNodes);
     }
     compile(parentNode, elements) {
-        elements.forEach((item) => {
+        elements.forEach(item => {
             let node;
             switch (item.nodeType) {
                 case NODE_TYPE_ELEMENT:
@@ -39,7 +39,7 @@ export default class HtmlParser {
             }
             parentNode.appendChild(node);
             if (item.propertis) {
-                item.propertis.forEach((attr) => {
+                item.propertis.forEach(attr => {
                     node.setAttribute(attr.key, attr.value);
                 })
             }

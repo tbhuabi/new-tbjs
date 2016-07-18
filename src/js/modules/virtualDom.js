@@ -222,84 +222,91 @@ class Element extends ElementEvent {
             let nextSelector = '';
             for (let i = 0, len = context.length; i < len; i++) {
                 let currentElement = context[i];
-                if (ALL_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(ALL_SELECTOR_REG, function () {
-                        currentElement.getElementsByTagName('*').filter(function (item) {
-                            parentElements.push(item);
-                        })
-                        return '';
-                    })
-                } else if (TAG_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(TAG_SELECTOR_REG, function (selector, tagName) {
-                        if (currentElement.tagName === tagName.toUpperCase()) {
-                            parentElements.push(currentElement);
-                        }
-                        return '';
-                    })
-                } else if (ID_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(ID_SELECTOR_REG, function (selector, id) {
-                        if (currentElement.id === id) {
-                            parentElements.push(currentElement);
-                        }
-                        return '';
-                    })
-                } else if (CLASSNAME_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(CLASSNAME_SELECTOR_REG, function (selector, className) {
-                        let reg = new RegExp('(^|\\s+)' + className + '(\\s+|$)');
-                        if (reg.test(currentElement.className)) {
-                            parentElements.push(currentElement);
-                        }
-                        return '';
-                    })
-                } else if (ATTRIBUTE_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(ATTRIBUTE_SELECTOR_REG, function (selector, propName, _, propValue) {
-                        if (propValue) {
-                            if (currentElement.getAttribute(propName) === propValue) {
-                                parentElements.push(currentElement);
-                            }
-                        } else {
-                            if (currentElement.hasAttribute(propName)) {
-                                parentElements.push(currentElement);
-                            }
-                        }
-                        return '';
-                    })
-                } else if (CHILDREN_SELECTOR_RGE.test(selector)) {
-                    nextSelector = selector.replace(CHILDREN_SELECTOR_RGE, function () {
-                        if (!currentElement.children) return '';
-                        for (let j = 0, len = currentElement.children.length; j < len; j++) {
-                            parentElements.push(currentElement.children[j]);
-                        }
-                        return '';
-                    })
-                } else if (FIRST_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(FIRST_SELECTOR_REG, function () {
-                        parentElements.push(currentElement);
-                        i = len;
-                        return '';
-                    })
-                } else if (LAST_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(LAST_SELECTOR_REG, function () {
-                        parentElements.push(context[len - 1]);
-                        i = len;
-                        return '';
-                    })
-                } else if (SIBLINGS_SELECTOR_REG.test(selector)) {
-                    nextSelector = selector.replace(SIBLINGS_SELECTOR_REG, function () {
-                        let siblings = currentElement.parentNode.children;
-                        siblings.filter(function (item) {
-                            if (item !== currentElement) {
+                switch (true) {
+                    case ALL_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(ALL_SELECTOR_REG, () => {
+                            currentElement.getElementsByTagName('*').filter(item => {
                                 parentElements.push(item);
-                            }
+                            })
+                            return '';
                         })
-                        return '';
-                    })
+                        break;
+                    case TAG_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(TAG_SELECTOR_REG, (selector, tagName) => {
+                            if (currentElement.tagName === tagName.toUpperCase()) {
+                                parentElements.push(currentElement);
+                            }
+                            return '';
+                        })
+                        break;
+                    case ID_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(ID_SELECTOR_REG, (selector, id) => {
+                            if (currentElement.id === id) {
+                                parentElements.push(currentElement);
+                            }
+                            return '';
+                        })
+                        break;
+                    case CLASSNAME_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(CLASSNAME_SELECTOR_REG, (selector, className) => {
+                            let reg = new RegExp('(^|\\s+)' + className + '(\\s+|$)');
+                            if (reg.test(currentElement.className)) {
+                                parentElements.push(currentElement);
+                            }
+                            return '';
+                        })
+                        break;
+                    case ATTRIBUTE_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(ATTRIBUTE_SELECTOR_REG, (selector, propName, _, propValue) => {
+                            if (propValue) {
+                                if (currentElement.getAttribute(propName) === propValue) {
+                                    parentElements.push(currentElement);
+                                }
+                            } else {
+                                if (currentElement.hasAttribute(propName)) {
+                                    parentElements.push(currentElement);
+                                }
+                            }
+                            return '';
+                        })
+                        break;
+                    case CHILDREN_SELECTOR_RGE.test(selector):
+                        nextSelector = selector.replace(CHILDREN_SELECTOR_RGE, () => {
+                            if (!currentElement.children) return '';
+                            for (let j = 0, len = currentElement.children.length; j < len; j++) {
+                                parentElements.push(currentElement.children[j]);
+                            }
+                            return '';
+                        })
+                        break;
+                    case FIRST_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(FIRST_SELECTOR_REG, () => {
+                            parentElements.push(currentElement);
+                            i = len;
+                            return '';
+                        })
+                        break;
+                    case LAST_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(LAST_SELECTOR_REG, () => {
+                            parentElements.push(context[len - 1]);
+                            i = len;
+                            return '';
+                        })
+                        break;
+                    case SIBLINGS_SELECTOR_REG.test(selector):
+                        nextSelector = selector.replace(SIBLINGS_SELECTOR_REG, () => {
+                            let siblings = currentElement.parentNode.children;
+                            siblings.filter(item => {
+                                if (item !== currentElement) {
+                                    parentElements.push(item);
+                                }
+                            })
+                            return '';
+                        })
+                        break;
+                    default:
+                        throw xmlMinErr('qureySelectorAll', '{0}不是一个正确的选择器！', selector);
                 }
-
-
-            }
-            if (selector === nextSelector) {
-                throw xmlMinErr('qureySelectorAll', '{0}不是一个正确的选择器！', selector);
             }
             parentElements = unique(parentElements);
             if (nextSelector) {
@@ -322,7 +329,7 @@ class ElementMethod extends Element {
                 elements.push(this.children[i]);
             }
             if (this.children[i].children) {
-                this.children[i].getElementsByTagName(tagName).filter(function (item) {
+                this.children[i].getElementsByTagName(tagName).forEach(item => {
                     elements.push(item);
                 });
             }
@@ -336,30 +343,30 @@ class ElementMethod extends Element {
                 elements.push(this.children[i]);
             }
             if (this.children[i].children) {
-                this.children[i].getElementsByClassName(className).filter(function (item) {
+                this.children[i].getElementsByClassName(className).forEach(item => {
                     elements.push(item);
                 });
             }
         }
         return elements;
     }
-    appendChild(TBDomElement) {
-        if (TBDomElement.parentNode !== this) {
-            TBDomElement.parentNode = this;
-            this.childNodes.push(TBDomElement);
-            if (TBDomElement.nodeType === NODE_TYPE_ELEMENT) {
-                this.children.push(TBDomElement);
+    appendChild(vDomElement) {
+        if (vDomElement.parentNode !== this) {
+            vDomElement.parentNode = this;
+            this.childNodes.push(vDomElement);
+            if (vDomElement.nodeType === NODE_TYPE_ELEMENT) {
+                this.children.push(vDomElement);
             }
         } else {
             for (let i = 0, len = this.childNodes.length; i < len; i++) {
-                if (TBDomElement === this.childNodes[i]) {
+                if (vDomElement === this.childNodes[i]) {
                     this.childNodes.push(this.childNodes.splice(i, 1));
                     break;
                 }
             }
-            if (TBDomElement.nodeType === NODE_TYPE_ELEMENT) {
+            if (vDomElement.nodeType === NODE_TYPE_ELEMENT) {
                 for (let i = 0, len = this.children.length; i < len; i++) {
-                    if (TBDomElement === this.children[i]) {
+                    if (vDomElement === this.children[i]) {
                         this.children.push(this.children.splice(i, 1));
                         break;
                     }
@@ -368,16 +375,16 @@ class ElementMethod extends Element {
         }
         this.$refresh();
     }
-    removeChild(TBDomElement) {
+    removeChild(vDomElement) {
         for (let i = 0, len = this.childNodes.length; i < len; i++) {
-            if (this.childNodes[i] === TBDomElement) {
+            if (this.childNodes[i] === vDomElement) {
                 this.childNodes.splice(i, 1);
                 break;
             }
         }
-        if (TBDomElement.nodeType === NODE_TYPE_ELEMENT) {
+        if (vDomElement.nodeType === NODE_TYPE_ELEMENT) {
             for (let i = 0, len = this.children.length; i < len; i++) {
-                if (this.children[i] === TBDomElement) {
+                if (this.children[i] === vDomElement) {
                     this.children.splice(i, 1);
                     break;
                 }
@@ -385,30 +392,30 @@ class ElementMethod extends Element {
         }
         this.$refresh();
     }
-    insertBefore(TBDomElement, nextElement) {
-        let parentNode = TBDomElement.parentNode;
+    insertBefore(vDomElement, nextElement) {
+        let parentNode = vDomElement.parentNode;
         for (let i = 0, len = parentNode.childNodes.length; i < len; i++) {
-            if (parentNode.childNodes[i] === TBDomElement) {
+            if (parentNode.childNodes[i] === vDomElement) {
                 parentNode.childNodes.splice(i, 1);
                 break;
             }
         }
         for (let i = 0, len = parentNode.children.length; i < len; i++) {
-            if (parentNode.children[i] === TBDomElement) {
+            if (parentNode.children[i] === vDomElement) {
                 parentNode.children.splice(i, 1);
                 break;
             }
         }
-        TBDomElement.parentNode = this;
+        vDomElement.parentNode = this;
         for (let i = 0, len = this.childNodes.length; i < len; i++) {
             if (this.childNodes[i] === nextElement) {
-                this.childNodes.splice(i, 0, TBDomElement);
+                this.childNodes.splice(i, 0, vDomElement);
                 break;
             }
         }
         for (let i = 0, len = this.children.length; i < len; i++) {
             if (this.children[i] === nextElement) {
-                this.children.splice(i, 0, TBDomElement);
+                this.children.splice(i, 0, vDomElement);
                 break;
             }
         }
@@ -460,7 +467,7 @@ class DocumentElement extends ElementMethod {
     }
     getElementsByName(name) {
         let elements = [];
-        this.getElementsByTagName('form').filter(function (item) {
+        this.getElementsByTagName('form').forEach(item => {
             if (item.hasAttribute(name)) {
                 elements.push(item);
             }
