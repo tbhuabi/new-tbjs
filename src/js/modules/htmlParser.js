@@ -9,7 +9,10 @@ import {
     NODE_TYPE_DOCUMENTFRAGMENT,
 }
 from './variables';
+
+
 const htmlParseMinErr = minErr('htmlParser');
+
 export default class HtmlParser {
     parse(text) {
         this.text = text;

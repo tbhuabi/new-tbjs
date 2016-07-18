@@ -56,7 +56,7 @@ export default class XmlAst {
                     if (tag.closeTag && !tag.beginTag) {
                         let beginTag = this.nodeTree.pop();
                         if (!beginTag) {
-                            throw xmlParseMinErr('lexer', '文档第{0}行第{1}位`<{2}>`标签错误，未开始的标签不闭合！', this.rowIndex, tag.startIndex - this.rowCharIndex, tag.tagName);
+                            throw xmlParseMinErr('lexer', '文档第{0}行第{1}位`<{2}>`标签错误，未开始的标签不能闭合！', this.rowIndex, tag.startIndex - this.rowCharIndex, tag.tagName);
                         }
                         if (beginTag != tag.tagName) {
                             throw xmlParseMinErr('lexer', '文档第{0}行第{1}位标签`<{2}>`未匹配正确的开始标签！', this.rowIndex, tag.startIndex - this.rowCharIndex, tag.tagName);
@@ -133,7 +133,7 @@ export default class XmlAst {
         if (rowSize) {
             this.rowIndex += rowSize.length;
         }
-        this.index = this.index + endIndex;
+        this.index += endIndex;
         if (this.peek()) {
             this.index += 3;
         }

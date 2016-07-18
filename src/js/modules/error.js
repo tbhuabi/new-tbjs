@@ -1,7 +1,8 @@
 export default function minErr(module) {
     return function (code, template, ...info) {
         let msg = '[' + (module ? module + ':' : '') + code + ']  ';
-        msg += template.replace(/\{(\d+)\}/g, function (str, $1) {
+
+        msg += template.replace(/\{(\d+)\}/g, (str, $1) => {
             return info[+$1] ? info[+$1] : str;
         })
 
