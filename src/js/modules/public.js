@@ -4,7 +4,7 @@ function isType(type) {
     return function (obj) {
         return {}.toString.call(obj) == '[object ' + type + ']';
     }
-};
+}
 const isObject = isType('Object');
 const isString = isType('String');
 const isArray = Array.isArray || isType('Array');
@@ -61,5 +61,6 @@ export {
     trim,
     forEach,
     unique,
-    isOddTag
+    isOddTag,
+    noop
 }

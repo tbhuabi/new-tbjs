@@ -1,27 +1,30 @@
 import Lexer from './lexer';
+import minErr from './error';
+
+const astMinErr=minErr('JSAst');
 
 export default class Ast {
     constructor() {
         this.lexer = new Lexer();
         this.constants = {
             'true': {
-                type: AST.Literal,
+                type: Ast.Literal,
                 value: true
             },
             'false': {
-                type: AST.Literal,
+                type: Ast.Literal,
                 value: false
             },
             'null': {
-                type: AST.Literal,
+                type: Ast.Literal,
                 value: null
             },
             'undefined': {
-                type: AST.Literal,
+                type: Ast.Literal,
                 value: undefined
             },
             'this': {
-                type: AST.ThisExpression
+                type: Ast.ThisExpression
             }
         }
     }
@@ -43,7 +46,7 @@ export default class Ast {
             }
             if (!this.expect(';')) {
                 return {
-                    type: AST.Program,
+                    type: Ast.Program,
                     body: body
                 };
             }
@@ -51,7 +54,7 @@ export default class Ast {
     }
     expressionStatement() {
         return {
-            type: AST.ExpressionStatement,
+            type: Ast.ExpressionStatement,
             expression: this.filterChain()
         }
     }
@@ -70,7 +73,7 @@ export default class Ast {
         let result = this.ternary();
         if (this.expect('=')) {
             result = {
-                type: AST.AssignmentExpression,
+                type: Ast.AssignmentExpression,
                 left: result,
                 operator: '=',
                 right: this.assignment()
@@ -87,7 +90,7 @@ export default class Ast {
             if (this.expect(':')) {
                 consequent = this.expression();
                 return {
-                    type: AST.ConditionalExpression,
+                    type: Ast.ConditionalExpression,
                     test: test,
                     alternate: alternate,
                     consequent: consequent
@@ -100,7 +103,7 @@ export default class Ast {
         let left = this.logicalAND();
         while (this.expect('||')) {
             left = {
-                type: AST.LogicalExpression,
+                type: Ast.LogicalExpression,
                 left: left,
                 operator: '||',
                 right: this.logicalAND()
@@ -113,7 +116,7 @@ export default class Ast {
 
         while (this.expect('&&')) {
             left = {
-                type: AST.LogicalExpression,
+                type: Ast.LogicalExpression,
                 left: left,
                 operator: '&&',
                 right: this.equality()
@@ -126,7 +129,7 @@ export default class Ast {
         let token;
         while (token = this.expect('==', '!=', '!==', '===')) {
             left = {
-                type: AST.BinaryExpression,
+                type: Ast.BinaryExpression,
                 left: left,
                 operator: token.text,
                 right: this.relational()
@@ -139,7 +142,7 @@ export default class Ast {
         let token;
         while (token = this.expect('<', '>', '<=', '>=')) {
             left = {
-                type: AST.BinaryExpression,
+                type: Ast.BinaryExpression,
                 left: left,
                 operator: token.text,
                 right: this.additive()
@@ -152,7 +155,7 @@ export default class Ast {
         let token;
         while (token = this.expect('+', '-')) {
             left = {
-                type: AST.BinaryExpression,
+                type: Ast.BinaryExpression,
                 left: left,
                 operator: token.text,
                 right: this.multiplicative()
@@ -165,7 +168,7 @@ export default class Ast {
         let token;
         while (token = this.expect('*', '/', '%')) {
             left = {
-                type: AST.BinaryExpression,
+                type: Ast.BinaryExpression,
                 left: left,
                 operator: token.text,
                 right: this.unary()
@@ -177,7 +180,7 @@ export default class Ast {
         let token = this.expect('+', '-', '!');
         if (token) {
             return {
-                type: AST.UnaryExpression,
+                type: Ast.UnaryExpression,
                 operator: token.text,
                 argument: this.unary()
             }
@@ -207,21 +210,21 @@ export default class Ast {
         while (next = this.expect('[', '(', '.')) {
             if (next.text === '[') {
                 primary = {
-                    type: AST.MemberExpression,
+                    type: Ast.MemberExpression,
                     object: primary,
                     property: this.expression()
-                }
+                };
                 this.consume(']');
             } else if (next.text === '(') {
                 primary = {
-                    type: AST.CallExpression,
+                    type: Ast.CallExpression,
                     callee: primary,
                     arguments: this.parseArguments()
-                }
+                };
                 this.consume(')');
             } else if (next.text === '.') {
                 primary = {
-                    type: AST.MemberExpression,
+                    type: Ast.MemberExpression,
                     object: primary,
                     property: this.expression()
                 }
@@ -243,7 +246,7 @@ export default class Ast {
     filter(baseExpression) {
         let args = [baseExpression];
         let result = {
-            type: AST.CallExpression,
+            type: Ast.CallExpression,
             callee: this.identifier(),
             arguments: args,
             filter: true
@@ -262,7 +265,7 @@ export default class Ast {
                     break;
                 }
                 property = {
-                    type: AST.Property
+                    type: Ast.Property
                 };
                 if (this.peek().constant) {
                     property.key = this.constant();
@@ -278,7 +281,7 @@ export default class Ast {
         }
         this.consume('}');
         return {
-            type: AST.ObjectExpression,
+            type: Ast.ObjectExpression,
             properties: properties
         }
     }
@@ -286,7 +289,7 @@ export default class Ast {
         let token = this.consume();
         if (token.identifier) {
             return {
-                type: AST.Identifier,
+                type: Ast.Identifier,
                 value: token.text
             }
         }
@@ -294,7 +297,7 @@ export default class Ast {
     }
     constant() {
         return {
-            type: AST.Literal,
+            type: Ast.Literal,
             value: this.consume().value
         }
     }
@@ -310,7 +313,7 @@ export default class Ast {
         }
         this.consume(']');
         return {
-            type: AST.ArrayExpression,
+            type: Ast.ArrayExpression,
             elements: elements
         }
     }
@@ -341,18 +344,18 @@ export default class Ast {
     }
 }
 
-AST.Program = 'Program';
-AST.ExpressionStatement = 'ExpressionStatement';
-AST.AssignmentExpression = 'AssignmentExpression';
-AST.ConditionalExpression = 'ConditionalExpression';
-AST.LogicalExpression = 'LogicalExpression';
-AST.BinaryExpression = 'BinaryExpression';
-AST.UnaryExpression = 'UnaryExpression';
-AST.CallExpression = 'CallExpression';
-AST.MemberExpression = 'MemberExpression';
-AST.Identifier = 'Identifier';
-AST.Literal = 'Literal';
-AST.ArrayExpression = 'ArrayExpression';
-AST.Property = 'Property';
-AST.ObjectExpression = 'ObjectExpression';
-AST.ThisExpression = 'ThisExpression';
+Ast.Program = 'Program';
+Ast.ExpressionStatement = 'ExpressionStatement';
+Ast.AssignmentExpression = 'AssignmentExpression';
+Ast.ConditionalExpression = 'ConditionalExpression';
+Ast.LogicalExpression = 'LogicalExpression';
+Ast.BinaryExpression = 'BinaryExpression';
+Ast.UnaryExpression = 'UnaryExpression';
+Ast.CallExpression = 'CallExpression';
+Ast.MemberExpression = 'MemberExpression';
+Ast.Identifier = 'Identifier';
+Ast.Literal = 'Literal';
+Ast.ArrayExpression = 'ArrayExpression';
+Ast.Property = 'Property';
+Ast.ObjectExpression = 'ObjectExpression';
+Ast.ThisExpression = 'ThisExpression';

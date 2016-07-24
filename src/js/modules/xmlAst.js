@@ -218,7 +218,7 @@ export default class XmlAst {
             this.index++;
             tag.endIndex++;
         } else {
-            throw xmlParseMinErr('regTag', '文档第{0}行第{1}位标签未正确关闭！', this.rowIndex, this.index - this.rowCharIndex);
+            throw xmlParseMinErr('readTag', '文档第{0}行第{1}位标签未正确关闭！', this.rowIndex, this.index - this.rowCharIndex);
         }
         return tag;
     }

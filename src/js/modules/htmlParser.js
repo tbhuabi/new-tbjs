@@ -7,6 +7,7 @@ import {
     NODE_TYPE_COMMENT,
     NODE_TYPE_DOCUMENT,
     NODE_TYPE_DOCUMENTFRAGMENT,
+    NODE_TYPE_COMMENT
 }
 from './variables';
 

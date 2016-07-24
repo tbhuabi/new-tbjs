@@ -59,7 +59,7 @@ class RootElement {
                 attrbutesList.push(attr);
             }
             return attrbutesList.join(' ');
-        }
+        };
 
         let getChildNodesHtml = function (obj) {
             let html = '';
@@ -79,7 +79,7 @@ class RootElement {
             } else {
                 outerHtml = '<' + tagName + (attrHtml ? ' ' + attrHtml : '') + (isOddTag.test(tagName) ? '' : '/') + '>';
             }
-        } else if (this.nodeType === NODE_TYPE_DOCUMENT) {
+        } else if (this.nodeType === NODE_TYPE_DOCUMENTFRAGMENT) {
             outerHtml = getChildNodesHtml(this);
         }
 
@@ -128,6 +128,7 @@ class ElementEvent extends RootElement {
 }
 class Element extends ElementEvent {
     $refresh() {
+        return;
         this.innerHTML = this.outerHTML = this.innerText = '';
         this.getOuterHtml();
         this.getInnerHtml();
@@ -518,7 +519,7 @@ class TextElement extends ElementEvent {
         this.parentNode = null;
         this.nodeType = NODE_TYPE_TEXT;
         this.nodeName = '#text';
-        this.textContent = text.replace(/[\n\t\r\v]/g, '');
+        this.textContent = text;//.replace(/[\n\t\r\v]/g, '');
         this.eventListener = {};
     }
 }
