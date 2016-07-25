@@ -1,12 +1,12 @@
-import HtmlParser from './modules/htmlParser';
+import HtmlParser from './js/modules/htmlParser';
 
-window.onload = function() {
+window.onload = function () {
     let text = document.querySelector('html').outerHTML;
     let htmlParser = new HtmlParser();
     let i = 0;
     let time = Date.now();
     let a;
-    while (i < 1000) {
+    while (i < 10000) {
         a = htmlParser.parse(text);
         i++;
     }

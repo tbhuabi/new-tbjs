@@ -3,8 +3,8 @@ import {
     NODE_TYPE_ELEMENT,
     NODE_TYPE_TEXT,
     NODE_TYPE_COMMENT,
-    NODE_TYPE_DOCUMENT,
-    NODE_TYPE_DOCUMENTFRAGMENT,
+    //NODE_TYPE_DOCUMENT,
+    NODE_TYPE_DOCUMENT_FRAGMENT,
 }
 from './variables';
 import {
@@ -37,7 +37,7 @@ export default class XmlAst {
 
 
         const fragment = {
-            nodeType: NODE_TYPE_DOCUMENTFRAGMENT,
+            nodeType: NODE_TYPE_DOCUMENT_FRAGMENT,
             childNodes: []
         };
         this.ignoreEmpty();
@@ -174,7 +174,7 @@ export default class XmlAst {
         const startRowIndex = this.rowIndex;
         const startIndex = this.index;
         let tagName = '';
-        let propertis;
+        let properties;
         let ch;
         this.index++;
         while (this.index < this.length) {
@@ -187,7 +187,7 @@ export default class XmlAst {
                 tagName += ch;
                 this.index++;
             } else {
-                propertis = this.readProperty();
+                properties = this.readProperty();
             }
         }
         let tag = {
@@ -197,8 +197,8 @@ export default class XmlAst {
             endIndex: this.index,
             nodeType: NODE_TYPE_ELEMENT,
             tagName: tagName,
-            propertis: propertis || []
-        }
+            properties: properties || []
+        };
         if (ch == '/') {
             this.index += 2;
             tag.endIndex += 2;
@@ -223,7 +223,7 @@ export default class XmlAst {
         return tag;
     }
     readProperty() {
-        let propertis = [];
+        let properties = [];
         while (this.index < this.length) {
             this.ignoreEmpty();
             const startRowIndex = this.rowIndex;
@@ -245,9 +245,9 @@ export default class XmlAst {
             property.endRowIndex = this.rowIndex;
             property.startIndex = startIndex;
             property.endIndex = this.index;
-            propertis.push(property);
+            properties.push(property);
         }
-        return propertis;
+        return properties;
     }
     readPropertyKey() {
         let key = '';

@@ -1,48 +1,47 @@
 const gulp = require('gulp');
-const babel = require('gulp-babel');
-const uglify = require('gulp-uglify');
-const rename = require('gulp-rename');
-const cssnano = require('gulp-cssnano');
-const concat = require('gulp-concat');
-const browserify = require('browserify');
-const source = require('vinyl-source-stream');
+// var minifycss = require('gulp-minify-css');
+const htmlmin = require('gulp-htmlmin');
+const webpack = require('webpack');
+const webpackConfig=require('./webpack.production.config');
+//    concat = require('gulp-concat'),
+//    uglify = require('gulp-uglify'),
+//    rename = require('gulp-rename'),
+//    del = require('del');
 
-// 编译并压缩js
-gulp.task('default', function () {
-  return gulp.src('src/**/*.js')
-    .pipe(babel({
-      presets: ['es2015']
+
+// gulp.task('css', function () {
+//   return gulp.src('src/**/*.css') //压缩的文件
+//     .pipe(minifycss()) //执行压缩
+//     .pipe(gulp.dest('webapp/')) //输出文件夹
+// });
+gulp.task('html', function () {
+  return gulp.src('src/views/**/*.html')
+    .pipe(htmlmin({
+      collapseWhitespace: true,
+      collapseBooleanAttributes: true,
+      removeComments: true,
+      removeEmptyAttributes: true,
+      removeScriptTypeAttributes: true,
+      removeStyleLinkTypeAttributes: true,
+      minifyJS: true,
+      minifyCSS: true
     }))
-    //    .pipe(uglify())
-    .pipe(gulp.dest('dist'))
-})
-
-// 合并并压缩css
-gulp.task('convertCSS', function () {
-  return gulp.src('app/css/*.css')
-    .pipe(concat('app.css'))
-    .pipe(cssnano())
-    .pipe(rename(function (path) {
-      path.basename += '.min';
-    }))
-    .pipe(gulp.dest('dist/css'));
-})
-
-// 监视文件变化，自动执行任务
-gulp.task('watch', function () {
-  gulp.watch('app/css/*.css', ['convertCSS']);
-  gulp.watch('app/js/*.js', ['convertJS', 'browserify']);
-})
-
-// browserify
-gulp.task("browserify", function () {
-  var b = browserify({
-    entries: "dist/error.js"
-  });
-
-  return b.bundle()
-    .pipe(source("bundle.js"))
-    .pipe(gulp.dest("dist"));
+    .pipe(gulp.dest('build/views/'));
 });
-
-gulp.task('start', ['convertJS', 'browserify']);
+gulp.task('img', function () {
+  return gulp.src('src/images/**.*') //压缩的文件
+    .pipe(gulp.dest('build/images/')) //输出文件夹
+});
+gulp.task('webpack', function (callback) {
+  webpack(webpackConfig, function (err) {
+    if(!err){
+      callback();
+    }
+  })
+})
+gulp.task('default', ['html', 'img','webpack'])
+gulp.task('watch',function () {
+  gulp.watch('src/**/*.js',['webpack'])
+  gulp.watch('src/**/*.scss',['webpack','img'])
+  gulp.watch('src/views/**/*.html',['html','img'])
+})

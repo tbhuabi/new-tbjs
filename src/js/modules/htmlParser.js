@@ -4,9 +4,8 @@ import DocumentElement from './virtualDom';
 import {
     NODE_TYPE_ELEMENT,
     NODE_TYPE_TEXT,
-    NODE_TYPE_COMMENT,
-    NODE_TYPE_DOCUMENT,
-    NODE_TYPE_DOCUMENTFRAGMENT,
+    //NODE_TYPE_DOCUMENT,
+    //NODE_TYPE_DOCUMENT_FRAGMENT,
     NODE_TYPE_COMMENT
 }
 from './variables';
@@ -42,12 +41,12 @@ export default class HtmlParser {
                     throw htmlParseMinErr('compile', '编译虚拟DOM出错，当前节点类型为`{0}`！', item.nodeType);
             }
             parentNode.appendChild(node);
-            if (item.propertis) {
-                item.propertis.forEach(attr => {
+            if (item.properties) {
+                item.properties.forEach(attr => {
                     node.setAttribute(attr.key, attr.value);
                 })
             }
-        })
+        });
         return this.virtualDom;
     }
 }

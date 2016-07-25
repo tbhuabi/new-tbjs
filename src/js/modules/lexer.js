@@ -33,7 +33,7 @@ export default class Lexer {
             } else if ('(){}[].,;:?'.indexOf(ch) !== -1) {
                 this.tokens.push({
                     text: ch,
-                })
+                });
                 this.index++;
             } else if (ch === ' ' || ch === '\r' || ch === '\t' ||
                 ch === '\n' || ch === '\v' || ch === '\u00A0') {
@@ -51,7 +51,7 @@ export default class Lexer {
                     this.tokens.push({
                         text: token,
                         operator: true
-                    })
+                    });
                     this.index += token.length;
                 } else {
                     throw lexerMinErr('lexer', '`{0}`不是一个合法的表达式！', this.text);
@@ -150,7 +150,7 @@ export default class Lexer {
                     text: quote + value + quote,
                     constant: true,
                     value: value
-                })
+                });
                 return;
             } else {
                 value += ch;

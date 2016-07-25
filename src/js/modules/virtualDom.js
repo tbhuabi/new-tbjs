@@ -11,8 +11,8 @@ import {
     NODE_TYPE_ELEMENT,
     NODE_TYPE_TEXT,
     NODE_TYPE_COMMENT,
-    NODE_TYPE_DOCUMENT,
-    NODE_TYPE_DOCUMENTFRAGMENT,
+    //NODE_TYPE_DOCUMENT,
+    NODE_TYPE_DOCUMENT_FRAGMENT,
 }
 from './variables';
 
@@ -67,7 +67,7 @@ class RootElement {
                 html += obj.childNodes[i].getOuterHtml();
             }
             return html;
-        }
+        };
 
 
         let outerHtml = '';
@@ -79,7 +79,7 @@ class RootElement {
             } else {
                 outerHtml = '<' + tagName + (attrHtml ? ' ' + attrHtml : '') + (isOddTag.test(tagName) ? '' : '/') + '>';
             }
-        } else if (this.nodeType === NODE_TYPE_DOCUMENTFRAGMENT) {
+        } else if (this.nodeType === NODE_TYPE_DOCUMENT_FRAGMENT) {
             outerHtml = getChildNodesHtml(this);
         }
 
@@ -128,7 +128,6 @@ class ElementEvent extends RootElement {
 }
 class Element extends ElementEvent {
     $refresh() {
-        return;
         this.innerHTML = this.outerHTML = this.innerText = '';
         this.getOuterHtml();
         this.getInnerHtml();
@@ -427,7 +426,7 @@ class DocumentElement extends ElementMethod {
     constructor(...args) {
         super(...args);
         this.$targetElement = null;
-        this.nodeType = NODE_TYPE_DOCUMENTFRAGMENT;
+        this.nodeType = NODE_TYPE_DOCUMENT_FRAGMENT;
         this.parentNode = null;
         this.innerHTML = '';
         this.innerText = '';
