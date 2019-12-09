@@ -303,6 +303,7 @@ export default class XmlAst {
             this.index++;
         }
     }
+
     later() {
         return this.text.slice(this.index, this.length);
     }

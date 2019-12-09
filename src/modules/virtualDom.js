@@ -200,10 +200,6 @@ class Element extends ElementEvent {
     }
     querySelectorAll(selector) {
         selector = ' ' + trim(selector);
-        let _this = this;
-        let elements = [];
-
-
 
         let ALL_SELECTOR_REG = /^\s+\*?(?!>|\[|:first-child|:last-child|\+)/;
         let TAG_SELECTOR_REG = /^(\w+(?:-\w+)*)/;
@@ -511,6 +507,7 @@ class EvenElement extends ElementMethod {
         this.eventListener = {};
     }
 }
+
 class TextElement extends ElementEvent {
     constructor(text) {
         super();

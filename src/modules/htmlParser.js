@@ -11,7 +11,7 @@ import {
 from './variables';
 
 
-const htmlParseMinErr = minErr('htmlParser');
+const htmlParseMinErr = minErr('e');
 
 export default class HtmlParser {
     parse(text) {
